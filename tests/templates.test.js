@@ -76,6 +76,24 @@ test('parseReportKind resolves kinds and aliases', () => {
   assert.equal(parseReportKind('随便写的'), 'daily')
 })
 
+test('renderTemplate fills the SESSIONS section for aggregated weeks', () => {
+  const data = {
+    ...SAMPLE_DATA,
+    sessions: [{ id: 's-abc12345', title: '周一', day: '2026-08-10', turns: 1, steps: 2, toolCalls: 3, tokens: 4000, filesModified: 2, errors: 0 }],
+    sourceCount: 1,
+  }
+  const draft = renderTemplate(loadTemplate('weekly'), data)
+  assert.ok(draft.includes('会话明细'))
+  assert.ok(draft.includes('s-abc123'))
+  assert.ok(draft.includes('4.0k'))
+  assert.ok(draft.includes('共聚合 1 个会话'))
+})
+
+test('weekly without sessions falls back to single-session note', () => {
+  const draft = renderTemplate(loadTemplate('weekly'), SAMPLE_DATA)
+  assert.ok(draft.includes('未聚合历史会话'))
+})
+
 test('weekly template uses period', () => {
   const draft = renderTemplate(loadTemplate('weekly'), SAMPLE_DATA)
   assert.ok(draft.includes('本周'))

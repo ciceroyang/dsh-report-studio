@@ -1,7 +1,5 @@
 # DeepSeek 开源了个 Agent 框架,我给它的生态贡献了第一个"工作日报"插件
 
-> 原文发布说明:本文为掘金/知乎分发版,与仓库内 [docs/tutorial-zh.md](./tutorial-zh.md) 内容同源,开头与结尾做了平台化改写。
-
 ## 事情是这样的
 
 DeepSeek 最近开源了 Harness——一个"一切皆插件"的 Agent 框架:模型、工具、会话、技能、UI,全是插件。项目两周冲到 6 万多 star,生态里已经冒出来 900 多个社区插件。
@@ -24,7 +22,7 @@ DeepSeek 最近开源了 Harness——一个"一切皆插件"的 Agent 框架:�
 
 ## 从零开发,我踩过的 5 个坑
 
-(完整版见 [docs/tutorial-zh.md](./tutorial-zh.md),这里列精华)
+(完整版见仓库教程:https://github.com/ciceroyang/dsh-report-studio/blob/main/docs/tutorial-zh.md,这里列精华)
 
 1. **`--patch` 绝对路径插件的依赖解析**:插件里的裸导入从插件自己目录向上找 node_modules,找不到就启动失败。本地开发要软链依赖。
 2. **headless bundle 装不进新建 profile**:它依赖一个没发到 npm 的私有包;跑 e2e 用默认 headless profile + `--patch`。
@@ -36,7 +34,7 @@ DeepSeek 最近开源了 Harness——一个"一切皆插件"的 Agent 框架:�
 
 - 已经装了 DeepSeek Harness:看仓库 README 的安装一节,一分钟装上;
 - 想学插件开发:教程里有个免构建、纯 ESM、可照抄的完整例子;
-- 就是路过:给仓库点个 star,或者看看 [demo/](demo/report-daily.example.md) 里那份真实会话产出的日报长什么样。
+- 就是路过:给仓库点个 star,或者看看这份真实会话产出的日报样例:https://github.com/ciceroyang/dsh-report-studio/blob/main/demo/report-daily.example.md
 
 ## 一点感想
 
@@ -45,5 +43,6 @@ Harness 官方在贡献指南里写了句话:**"我们不认为官方仓库里�
 ---
 
 **仓库**:https://github.com/ciceroyang/dsh-report-studio
-**star、issue、PR 都欢迎**;如果它帮你省下了写日报的时间,可以请作者喝杯咖啡(GitHub Sponsors)。
-付费模板包(团队日报/行业全家桶/企业定制)正在路上,关注仓库不错过。
+**star、issue、PR 都欢迎**。
+
+付费行业模板包(开发团队 / 运营自媒体)已上架爱发电:https://afdian.com/a/cicero ——插件本身 MIT 免费,模板 19.9 起,买了不亏,不买看教程也欢迎。
