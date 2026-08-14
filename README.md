@@ -1,5 +1,9 @@
 # dsh-report-studio
 
+[![CI](https://github.com/ciceroyang/dsh-report-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/ciceroyang/dsh-report-studio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-00c2ff.svg)](LICENSE)
+[![dsh-plugin](https://img.shields.io/badge/topic-dsh--plugin-00c2ff.svg)](https://github.com/topics/dsh-plugin)
+
 **When your agent finishes work, have it write up what happened — into something you can actually hand over.**
 
 The first "session → work deliverable" plugin in the DeepSeek Harness ecosystem:
@@ -126,6 +130,11 @@ Copy any file from this repo's \`templates/\` directory as a starting point.
 - Persistence uses Node's \`fs\` directly, outside the Harness fs policy layer;
   path-escape protection lives inside the plugin.
 - Report tools require an agent-bound session (web and headless both qualify).
+
+## Docs & examples
+
+- [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 5 个实测坑
+- [Example daily report](demo/report-daily.example.md) — 真实会话产出的日报样例(凭据块)
 
 ## Contributing
 

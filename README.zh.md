@@ -1,5 +1,9 @@
 # dsh-report-studio
 
+[![CI](https://github.com/ciceroyang/dsh-report-studio/actions/workflows/ci.yml/badge.svg)](https://github.com/ciceroyang/dsh-report-studio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-00c2ff.svg)](LICENSE)
+[![dsh-plugin](https://img.shields.io/badge/topic-dsh--plugin-00c2ff.svg)](https://github.com/topics/dsh-plugin)
+
 **让 agent 干完活,顺手把"干了什么"写成能直接交出去的东西。**
 
 DeepSeek Harness 生态中第一个「会话 → 工作交付物」插件:把一次会话一键变成
@@ -120,6 +124,11 @@ agent 会(work-report skill 已教会它):
 - 周报基于**当前会话**聚合;跨会话汇总在路线图中。
 - 落盘走 Node 原生 fs,不经过 Harness 的 fs 策略层;路径逃逸防护在插件内实现。
 - 报告工具要求调用发生在 agent 会话内(headless 与 web 均满足)。
+
+## 文档与示例
+
+- [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 5 个实测坑
+- [日报样例](demo/report-daily.example.md) — 真实会话产出的日报(含凭据块)
 
 ## 贡献
 
