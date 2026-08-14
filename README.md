@@ -150,7 +150,7 @@ Issues and PRs welcome (typos, new templates, translations, tests). Before pushi
 
 [MIT](./LICENSE). If this saves you from writing another daily report:
 
-- Mainland China: Afdian link coming soon (GitHub Sponsors cannot pay out there)
+- Mainland China: [Afdian](https://afdian.com/a/cicero) (pays out to Alipay; GitHub Sponsors cannot pay out there)
 - Elsewhere: [GitHub Sponsors](https://github.com/sponsors/ciceroyang)
 
 ---

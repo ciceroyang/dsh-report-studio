@@ -21,8 +21,8 @@ v1 已含两个套餐 × 4 类 = 8 套模板:
 dev-team(站会日报/交付周报/部署交接/技术博客)、
 ops-media(数据日报/运营周报/活动交接/公众号爆款),
 全部通过插件渲染兼容性验证(零残留占位符)。
-销售页(README)、定价(pricing)、交付指南(delivery-guide)、授权(license)齐备,
-待开通销售渠道(爱发电/面包多/Sponsors 高级档)。
+销售页(README)、定价(pricing)、交付指南(delivery-guide)、授权(license)齐备。
+**爱发电已上架:https://afdian.com/a/cicero**(三档订阅:5/30/200 元);面包多为买断制备选。
 
 | 档位 | 内容 | 定价 |
 |---|---|---|
