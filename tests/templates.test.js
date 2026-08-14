@@ -5,7 +5,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { loadTemplate, renderTemplate, hasUnfilledProse, REPORT_KINDS } from '../lib/templates.js'
+import { loadTemplate, renderTemplate, hasUnfilledProse, parseReportKind, REPORT_KINDS } from '../lib/templates.js'
 
 test('every declared kind ships a template', () => {
   for (const kind of REPORT_KINDS) {
@@ -60,6 +60,20 @@ test('renderTemplate leaves unknown placeholders untouched', () => {
 test('hasUnfilledProse detects leftover slots', () => {
   assert.equal(hasUnfilledProse('还有 [[待写:摘要]] 没写'), true)
   assert.equal(hasUnfilledProse('全部写完了'), false)
+})
+
+test('parseReportKind resolves kinds and aliases', () => {
+  assert.equal(parseReportKind('daily'), 'daily')
+  assert.equal(parseReportKind(' WEEKLY '), 'weekly')
+  assert.equal(parseReportKind('handoff'), 'handoff')
+  assert.equal(parseReportKind('article'), 'article')
+  assert.equal(parseReportKind('日报'), 'daily')
+  assert.equal(parseReportKind('周报'), 'weekly')
+  assert.equal(parseReportKind('交接'), 'handoff')
+  assert.equal(parseReportKind('公众号'), 'article')
+  assert.equal(parseReportKind('d'), 'daily')
+  assert.equal(parseReportKind(''), 'daily')
+  assert.equal(parseReportKind('随便写的'), 'daily')
 })
 
 test('weekly template uses period', () => {

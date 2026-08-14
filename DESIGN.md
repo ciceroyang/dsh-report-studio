@@ -34,7 +34,7 @@ DeepSeek Harness 生态里第一个「会话 → 工作交付物」插件:把一
 
 ## 产品形态(免构建,直接可装)
 
-\`\`\`
+```
 dsh-report-studio/
 ├── package.json            # type:module, main:index.js, dsh.bundle.patch
 ├── cordis.patch.yml        # insert report-studio 插件行
@@ -50,7 +50,7 @@ dsh-report-studio/
 ├── README.md / README.zh.md
 ├── LICENSE(MIT)
 └── FUNDING.yml             # GitHub Sponsors
-\`\`\`
+```
 
 ## 两个工具
 

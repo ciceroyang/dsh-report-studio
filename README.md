@@ -15,16 +15,16 @@ cannot be embellished.
 
 ## Features
 
-- **4 ready templates**: \`daily\`, \`weekly\`, \`handoff\`, \`article\`
+- **4 ready templates**: `daily`, `weekly`, `handoff`, `article`
 - **Deterministic session extraction**: user asks, todo snapshots, turn/step stats,
   token ledger, tool calls, produced files, shell commands, errors and blocks —
   all read from the durable session event log, never from the model's memory
 - **Verifiable receipt block**: session id, workspace, generation time, report
   SHA-256 and artifact SHA-256 appended to every saved report
 - **Safe persistence**: target paths are confined to the session workspace;
-  absolute-path escapes and \`..\` traversal are rejected
+  absolute-path escapes and `..` traversal are rejected
 - **Customizable templates**: override built-in templates wholesale (placeholders below)
-- **No build step**: plain ESM; install via \`dsh plugin\` or load with a \`--patch\` overlay
+- **No build step**: plain ESM; install via `dsh plugin` or load with a `--patch` overlay
 
 ## Install
 
@@ -52,14 +52,18 @@ Tell the agent either of:
 - "Write today's work report."
 - "Turn this session into a handoff document for the next person."
 
-The bundled \`work-report\` skill teaches the agent the full workflow:
+The bundled `work-report` skill teaches the agent the full workflow:
 
-1. \`report_generate\` produces a draft with hard data plus \`[[待写:…]]\` prose slots;
+1. `report_generate` produces a draft with hard data plus `[[待写:…]]` prose slots;
 2. the agent fills the slots from session facts only;
-3. \`report_save\` writes the file and appends the receipt;
+3. `report_save` writes the file and appends the receipt;
 4. the agent replies with the saved path and the report hash.
 
-Default save location: \`reports/<kind>-<date>.md\` inside the workspace.
+Default save location: `reports/<kind>-<date>.md` inside the workspace.
+
+For an instant draft preview without a model round trip, type the slash command:
+
+    /report daily     # weekly / handoff / article also work
 
 ## Tools
 
@@ -67,20 +71,20 @@ Default save location: \`reports/<kind>-<date>.md\` inside the workspace.
 
 | Argument | Required | Meaning |
 |---|---|---|
-| \`kind\` | yes | \`daily\` / \`weekly\` / \`handoff\` / \`article\` |
-| \`title\` | no | custom title; falls back to the session title |
-| \`period\` | no | period label (e.g. "2026-08-11 ~ 2026-08-17") for weekly |
+| `kind` | yes | `daily` / `weekly` / `handoff` / `article` |
+| `title` | no | custom title; falls back to the session title |
+| `period` | no | period label (e.g. "2026-08-11 ~ 2026-08-17") for weekly |
 
-Returns the full Markdown draft; prose sections are \`[[待写:…]]\` markers.
+Returns the full Markdown draft; prose sections are `[[待写:…]]` markers.
 
 ### report_save
 
 | Argument | Required | Meaning |
 |---|---|---|
-| \`content\` | yes | final Markdown (receipt is appended automatically) |
-| \`path\` | no | target path; defaults to \`reports/<kind>-<date>.md\` |
-| \`kind\` | no | used for the default filename |
-| \`artifacts\` | no | produced file paths; existing files get hashed into the receipt |
+| `content` | yes | final Markdown (receipt is appended automatically) |
+| `path` | no | target path; defaults to `reports/<kind>-<date>.md` |
+| `kind` | no | used for the default filename |
+| `artifacts` | no | produced file paths; existing files get hashed into the receipt |
 
 Returns the absolute path, report SHA-256, and verified artifact hashes.
 
@@ -99,7 +103,7 @@ deterministically by the plugin):
     {{ERRORS}}  tool errors and blocks
     {{TIMELINE}} per-turn timeline
 
-Prose sections are written as \`[[待写:…]]\` and must be filled before saving.
+Prose sections are written as `[[待写:…]]` and must be filled before saving.
 
 Point the plugin at a custom directory:
 
@@ -110,7 +114,7 @@ Point the plugin at a custom directory:
             templatesDirs:
               - '/absolute/path/to/my-templates'
 
-Copy any file from this repo's \`templates/\` directory as a starting point.
+Copy any file from this repo's `templates/` directory as a starting point.
 
 ## Receipt example
 
@@ -127,7 +131,7 @@ Copy any file from this repo's \`templates/\` directory as a starting point.
 ## Known limitations (0.1.0)
 
 - Weekly aggregates the **current session**; cross-session aggregation is on the roadmap.
-- Persistence uses Node's \`fs\` directly, outside the Harness fs policy layer;
+- Persistence uses Node's `fs` directly, outside the Harness fs policy layer;
   path-escape protection lives inside the plugin.
 - Report tools require an agent-bound session (web and headless both qualify).
 
