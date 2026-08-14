@@ -142,8 +142,10 @@ agent 会(work-report skill 已教会它):
 
 ## 许可证与赞助
 
-[MIT](./LICENSE)。如果它帮你省了写日报的时间,欢迎
-[GitHub Sponsors](https://github.com/sponsors/ciceroyang) 请一杯咖啡。
+[MIT](./LICENSE)。如果它帮你省了写日报的时间:
+
+- 国内赞助:爱发电(开通后放链接,提现到支付宝;GitHub Sponsors 不支持大陆收款)
+- 海外赞助:[GitHub Sponsors](https://github.com/sponsors/ciceroyang)
 
 ---
 
