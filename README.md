@@ -88,6 +88,18 @@ Returns the full Markdown draft; prose sections are `[[待写:…]]` markers.
 
 Returns the absolute path, report SHA-256, and verified artifact hashes.
 
+### report_week
+
+Aggregates every persisted session of the current workspace (logs under
+`$DSH_HOME/sessions`) plus the live session into a weekly draft with a
+per-session table. Reading historical logs needs Node ≥ 22.15 (built-in zstd);
+older Node degrades gracefully to the current session only.
+
+| Argument | Required | Meaning |
+|---|---|---|
+| `title` | no | custom title |
+| `period` | no | period label, e.g. "2026-08-11 ~ 2026-08-17" |
+
 ## Custom templates
 
 Templates are plain Markdown with stable placeholders (data sections are filled
@@ -102,6 +114,7 @@ deterministically by the plugin):
     {{COMMANDS}} shell commands run
     {{ERRORS}}  tool errors and blocks
     {{TIMELINE}} per-turn timeline
+    {{SESSIONS}} weekly session table (report_week aggregation)
 
 Prose sections are written as `[[待写:…]]` and must be filled before saving.
 

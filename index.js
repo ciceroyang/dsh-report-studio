@@ -16,6 +16,8 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import { extractSession } from './lib/extract.js'
 import { loadTemplate, renderTemplate, REPORT_KINDS, hasUnfilledProse, parseReportKind } from './lib/templates.js'
 import { saveReport } from './lib/save.js'
+import { defaultSessionRoot, readWorkspaceSessions } from './lib/sessions.js'
+import { aggregateSessions } from './lib/aggregate.js'
 
 export const name = 'report-studio'
 
@@ -141,6 +143,46 @@ export function apply(ctx, config) {
         data.period = args.period.trim()
       }
       const template = loadTemplate(args.kind, settings.templatesDirs)
+      return renderTemplate(template, data)
+    },
+  })))
+
+  disposers.push(ctx.tools.register(defineTool({
+    name: 'report_week',
+    description:
+      '聚合本周工作区内所有历史会话(读取 $DSH_HOME/sessions 下的持久化日志)+ 当前会话,' +
+      '生成周报草稿。历史日志读取需要 Node >= 22.15(内置 zstd),更老版本只聚合当前会话。' +
+      '填充完所有 [[待写:…]] 标记后用 report_save 保存。',
+    parameters: {
+      title: {
+        type: 'string',
+        description: '可选自定义标题;省略时使用默认周报标题',
+      },
+      period: {
+        type: 'string',
+        description: '可选周期说明,如"2026-08-11 ~ 2026-08-17"',
+      },
+    },
+    output: {
+      schema: { type: 'string' },
+      render: (_args, value) => [{ type: 'text', text: value }],
+    },
+    async execute(args, exec) {
+      const session = callerSession(exec)
+      const cwd = session.header?.cwd ?? process.cwd()
+      const entries = readWorkspaceSessions(defaultSessionRoot(), cwd, String(session.id))
+      const data = aggregateSessions(entries, {
+        id: session.id,
+        header: session.header ?? {},
+        events: session.events,
+      }, cwd)
+      if (typeof args.title === 'string' && args.title.trim() !== '') {
+        data.titleOverride = args.title.trim()
+      }
+      if (typeof args.period === 'string' && args.period.trim() !== '') {
+        data.period = args.period.trim()
+      }
+      const template = loadTemplate('weekly', settings.templatesDirs)
       return renderTemplate(template, data)
     },
   })))
