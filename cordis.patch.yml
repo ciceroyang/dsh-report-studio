@@ -1,0 +1,6 @@
+# dsh-report-studio bundle patch layer.
+# Applied to any profile that lists this bundle; rows reference the package by
+# name so Node resolution finds the installed code.
+- insert:
+    - id: report-studio
+      name: dsh-report-studio
