@@ -17,13 +17,13 @@ DeepSeek Harness 生态中第一个「会话 → 工作交付物」插件:把一
 - **4 套开箱即用模板**:daily(日报)、weekly(周报)、handoff(交接文档)、article(公众号文章)
 - **会话硬数据自动提取**:用户诉求、任务清单、回合/步骤统计、Token 账本、工具调用、产出文件、执行命令、错误与阻塞——全部来自会话事件日志,不靠模型回忆
 - **可验证凭据块**:每份报告末尾自动追加会话 ID、工作区、生成时间、报告 SHA-256 与产物 SHA-256
-- **落盘安全**:目标路径强制限制在会话工作区内,拒绝绝对路径逃逸与 \`..\` 穿越
+- **落盘安全**:目标路径强制限制在会话工作区内,拒绝绝对路径逃逸与 `..` 穿越
 - **模板可定制**:内置模板可整体覆盖,占位符见下文
-- **免构建**:纯 ESM,直接 \`dsh plugin\` 安装或 \`--patch\` 加载,无编译步骤
+- **免构建**:纯 ESM,直接 `dsh plugin` 安装或 `--patch` 加载,无编译步骤
 
 ## 安装
 
-需要 Node.js ≥ 18,以及 DeepSeek Harness(\`npx @deepseek-ai/dsh web\` 或源码运行)。
+需要 Node.js ≥ 18,以及 DeepSeek Harness(`npx @deepseek-ai/dsh web` 或源码运行)。
 
 ### 方式一:plugin 安装(需要 pnpm)
 
@@ -50,12 +50,16 @@ DeepSeek Harness 生态中第一个「会话 → 工作交付物」插件:把一
 
 agent 会(work-report skill 已教会它):
 
-1. 调用 \`report_generate\` 生成带硬数据与 \`[[待写:…]]\` 标记的草稿;
+1. 调用 `report_generate` 生成带硬数据与 `[[待写:…]]` 标记的草稿;
 2. 用会话事实填满散文段落;
-3. 调用 \`report_save\` 落盘并追加凭据块;
+3. 调用 `report_save` 落盘并追加凭据块;
 4. 回复你保存路径与报告哈希。
 
-保存位置默认在工作区 \`reports/<kind>-<date>.md\`,可在调用时指定 \`path\`。
+保存位置默认在工作区 `reports/<kind>-<date>.md`,可在调用时指定 `path`。
+
+也可以直接在输入框敲命令**即时预览草稿**(不消耗模型回合):
+
+    /report daily     # 或 weekly / handoff / article,中文别名 日报/周报/交接/公众号 也行
 
 ## 工具
 
@@ -63,20 +67,20 @@ agent 会(work-report skill 已教会它):
 
 | 参数 | 必填 | 说明 |
 |---|---|---|
-| \`kind\` | 是 | \`daily\` / \`weekly\` / \`handoff\` / \`article\` |
-| \`title\` | 否 | 自定义标题;省略时用会话标题或默认标题 |
-| \`period\` | 否 | 周期说明(如"2026-08-11 ~ 2026-08-17"),周报模板使用 |
+| `kind` | 是 | `daily` / `weekly` / `handoff` / `article` |
+| `title` | 否 | 自定义标题;省略时用会话标题或默认标题 |
+| `period` | 否 | 周期说明(如"2026-08-11 ~ 2026-08-17"),周报模板使用 |
 
-返回:完整 Markdown 草稿。散文段为 \`[[待写:…]]\` 标记,由 agent 在两次调用之间填充。
+返回:完整 Markdown 草稿。散文段为 `[[待写:…]]` 标记,由 agent 在两次调用之间填充。
 
 ### report_save
 
 | 参数 | 必填 | 说明 |
 |---|---|---|
-| \`content\` | 是 | 最终报告全文(不含凭据块;所有 \`[[待写:…]]\` 必须已替换) |
-| \`path\` | 否 | 目标路径;省略时 \`reports/<kind>-<date>.md\` |
-| \`kind\` | 否 | 用于默认文件名;省略时 \`daily\` |
-| \`artifacts\` | 否 | 产出文件路径列表;存在的文件会被哈希进凭据块 |
+| `content` | 是 | 最终报告全文(不含凭据块;所有 `[[待写:…]]` 必须已替换) |
+| `path` | 否 | 目标路径;省略时 `reports/<kind>-<date>.md` |
+| `kind` | 否 | 用于默认文件名;省略时 `daily` |
+| `artifacts` | 否 | 产出文件路径列表;存在的文件会被哈希进凭据块 |
 
 返回:绝对路径 + 报告 SHA-256 + 已核验产物列表。
 
@@ -94,9 +98,9 @@ agent 会(work-report skill 已教会它):
     {{ERRORS}}  工具错误与阻塞
     {{TIMELINE}} 逐回合时间线
 
-散文段写 \`[[待写:说明]]\`,agent 保存前会填满。
+散文段写 `[[待写:说明]]`,agent 保存前会填满。
 
-放一份同名模板到自定义目录(如 \`daily.md\`),并在插件配置里声明:
+放一份同名模板到自定义目录(如 `daily.md`),并在插件配置里声明:
 
     - insert:
         - id: report-studio
@@ -105,7 +109,7 @@ agent 会(work-report skill 已教会它):
             templatesDirs:
               - '/absolute/path/to/my-templates'
 
-内置模板在此仓库 \`templates/\` 目录,可直接复制修改。
+内置模板在此仓库 `templates/` 目录,可直接复制修改。
 
 ## 凭据块样例
 

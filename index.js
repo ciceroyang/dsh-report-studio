@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { extractSession } from './lib/extract.js'
-import { loadTemplate, renderTemplate, REPORT_KINDS, hasUnfilledProse } from './lib/templates.js'
+import { loadTemplate, renderTemplate, REPORT_KINDS, hasUnfilledProse, parseReportKind } from './lib/templates.js'
 import { saveReport } from './lib/save.js'
 
 export const name = 'report-studio'
@@ -77,6 +77,32 @@ export function apply(ctx, config) {
     } catch (error) {
       ctx.logger?.warn?.('dsh-report-studio: failed to register work-report skill: ' + String(error))
     }
+  }
+
+  // Human command: instant draft preview without a model round trip.
+  const commands = ctx.get('commands')
+  if (commands && typeof commands.register === 'function') {
+    disposers.push(commands.register({
+      name: 'report',
+      description: '即时预览本次会话的报告草稿(daily/weekly/handoff/article)',
+      input: { hint: 'daily | weekly | handoff | article' },
+      handler(invocation) {
+        try {
+          const kind = parseReportKind(invocation.rawInput)
+          const session = invocation.agent?.session
+          if (!session) return { kind: 'error', text: '/report 需要一个进行中的会话。' }
+          const data = extractSession(session.events, session)
+          const template = loadTemplate(kind, settings.templatesDirs)
+          const draft = renderTemplate(template, data)
+          return {
+            kind: 'success',
+            text: '已生成 ' + kind + ' 草稿预览(占位段落待填)。发送「填好并保存到 reports/」让我完成剩余步骤。\n\n' + draft,
+          }
+        } catch (error) {
+          return { kind: 'error', text: String(error?.message ?? error) }
+        }
+      },
+    }))
   }
 
   disposers.push(ctx.tools.register(defineTool({
