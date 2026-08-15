@@ -20,7 +20,7 @@ DeepSeek 最近开源了 Harness——一个"一切皆插件"的 Agent 框架:�
 
 四种模板开箱即用:日报、周报、交接文档(让接手人不复盘会话也能继续)、公众号文章。
 
-## 从零开发,我踩过的 5 个坑
+## 从零开发,我踩过的 6 个坑
 
 (完整版见仓库教程:https://github.com/ciceroyang/dsh-report-studio/blob/main/docs/tutorial-zh.md,这里列精华)
 
@@ -29,6 +29,7 @@ DeepSeek 最近开源了 Harness——一个"一切皆插件"的 Agent 框架:�
 3. **pnpm 缺失**:`dsh plugin` 报 "pnpm not found on PATH";国内网络装 pnpm 记得用镜像。
 4. **object 输出 schema 必须写 `additionalProperties: true`**,否则工具注册直接失败。
 5. **占位符校验要真校验**:我在保存前拒绝残留占位符的报告,e2e 时这个守卫真的拦截了一次模型输出。
+6. **DSH 会话日志是多帧 zstd**:想读历史会话时,`zstdDecompressSync` 只解压第一帧——出来的只有一行 header,事件全丢。要先扫描帧结构再逐帧解压,算法官方 format.ts 里就有,直接抄。
 
 ## 你可以怎么用
 

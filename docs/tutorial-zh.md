@@ -154,6 +154,13 @@ skill 的 Markdown 是**模型视角的说明书**:何时用、分几步、每�
 5. **占位符校验要真校验**:我在 report_save 里拒绝残留 `[[待写:…]]` 的报告,
    e2e 时这个守卫真的拦截了一次模型输出——守卫不是摆设,要测到它生效。
 
+6. **DSH 会话日志是多帧 zstd**:想读历史会话(做跨会话周报之类)时,
+   Node 内置的 `zstdDecompressSync` 只解压第一帧,而 DSH 的 session.jsonl.zstd
+   是拼接帧容器——同步解压出来只有一行 header,事件全丢。
+   正确姿势:先按帧结构扫描(magic 0xFD2FB528 + 帧头描述符 + 块头循环),
+   再逐帧解压拼接。算法可以直接抄官方
+   dsh-session-persistence-jsonl 的 format.ts(`scanZstdFrames`),MIT 协议。
+
 ## 测试与发布清单
 
 - 单测:纯函数(事件提取/模板渲染/哈希/路径安全)用 node:test 全覆盖,

@@ -149,6 +149,14 @@ remain before saving"). It is injected on demand and costs no standing tokens.
    with unfilled slots left over — and during e2e, the guard really caught one
    model output. Guards are not decoration; test that they fire.
 
+6. **DSH session logs are multi-frame zstd**: reading historical sessions (for a
+   cross-session weekly, say) with Node's `zstdDecompressSync` silently yields
+   only the FIRST frame — just the header line, no events. The logs are
+   concatenated-frame containers. Scan the frame structure first (magic
+   0xFD2FB528, frame-header descriptor, block-header loop) and decompress each
+   frame separately; the official dsh-session-persistence-jsonl format.ts
+   (`scanZstdFrames`) is MIT and copyable.
+
 ## Test & publish checklist
 
 - Unit-test every pure function (extraction/rendering/hashing/path safety) with
