@@ -95,6 +95,19 @@ Aggregates every persisted session of the current workspace (logs under
 per-session table. Reading historical logs needs Node ≥ 22.15 (built-in zstd);
 older Node degrades gracefully to the current session only.
 
+### report_publish
+
+Publish a report to Feishu (custom bot webhook) or Notion (page); `target=dry` previews the payload without sending anything.
+
+| Argument | Required | Meaning |
+|---|---|---|
+| `target` | yes | `feishu` / `notion` / `dry` |
+| `content` | no | report text; otherwise read from `path` |
+| `path` | no | saved report file (inside the workspace) |
+| `title` | no | Feishu prefix / Notion page title |
+
+Configuration: plugin config `publish.feishuWebhook` / `publish.notionToken` + `publish.notionParentPageId`, or env vars `FEISHU_WEBHOOK` / `NOTION_TOKEN` / `NOTION_PARENT_PAGE_ID`. Real publishing fails loudly without them; dry mode always works.
+
 | Argument | Required | Meaning |
 |---|---|---|
 | `title` | no | custom title |

@@ -88,6 +88,19 @@ agent 会(work-report skill 已教会它):
 
 聚合本周工作区内所有历史会话(读 $DSH_HOME/sessions 持久化日志)+ 当前会话,生成周报草稿,附"会话明细"表。历史日志读取需要 Node ≥ 22.15(内置 zstd);更老版本自动降级为仅当前会话。
 
+### report_publish
+
+把报告发布到飞书(自定义机器人 webhook)或 Notion(页面);`target=dry` 只预览载荷不发请求。
+
+| 参数 | 必填 | 说明 |
+|---|---|---|
+| `target` | 是 | `feishu` / `notion` / `dry` |
+| `content` | 否 | 报告全文;省略时从 `path` 读取 |
+| `path` | 否 | 已保存报告文件(工作区内) |
+| `title` | 否 | 飞书作为前缀,Notion 作为页面标题 |
+
+配置:插件配置 `publish.feishuWebhook` / `publish.notionToken` + `publish.notionParentPageId`,或环境变量 `FEISHU_WEBHOOK` / `NOTION_TOKEN` / `NOTION_PARENT_PAGE_ID`。未配置时真实发布会明确报错,dry 永远可用。
+
 | 参数 | 必填 | 说明 |
 |---|---|---|
 | `title` | 否 | 自定义标题 |
