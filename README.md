@@ -143,14 +143,15 @@ Copy any file from this repo's `templates/` directory as a starting point.
 
 ## Known limitations (0.1.0)
 
-- Weekly aggregates the **current session**; cross-session aggregation is on the roadmap.
+- report_week cross-session aggregation reads historical logs under $DSH_HOME/sessions (multi-frame zstd); historical reading needs Node ≥ 22.15.
 - Persistence uses Node's `fs` directly, outside the Harness fs policy layer;
   path-escape protection lives inside the plugin.
 - Report tools require an agent-bound session (web and headless both qualify).
 
 ## Docs & examples
 
-- [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 5 个实测坑
+- [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 6 个实测坑
+- [Plugin scaffold](https://github.com/ciceroyang/create-dsh-plugin) — generate the same project layout in one command
 - [Example daily report](demo/report-daily.example.md) — 真实会话产出的日报样例(凭据块)
 
 ## Contributing
