@@ -135,13 +135,14 @@ agent 会(work-report skill 已教会它):
 
 ## 已知限制(0.1.0)
 
-- 周报基于**当前会话**聚合;跨会话汇总在路线图中。
+- report_week 跨会话聚合读取 $DSH_HOME/sessions 历史日志(多帧 zstd),历史读取需 Node ≥ 22.15。
 - 落盘走 Node 原生 fs,不经过 Harness 的 fs 策略层;路径逃逸防护在插件内实现。
 - 报告工具要求调用发生在 agent 会话内(headless 与 web 均满足)。
 
 ## 文档与示例
 
-- [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 5 个实测坑
+- [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 6 个实测坑
+- [插件脚手架](https://github.com/ciceroyang/create-dsh-plugin) — 一键生成同款插件工程
 - [日报样例](demo/report-daily.example.md) — 真实会话产出的日报(含凭据块)
 
 ## 贡献
