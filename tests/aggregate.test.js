@@ -47,7 +47,7 @@ test('aggregateSessions sums stats and lists sessions', () => {
   assert.equal(out.tools[0].name, 'bash')
   assert.equal(out.tools[0].calls, 8)
   assert.equal(out.tasks.asks.length, 3)
-  assert.ok(out.tasks.asks[0].includes('[会话 s-aaaa11]'))
+  assert.ok(out.tasks.asks[0].text.includes('[会话 s-aaaa11]'))
   assert.equal(out.sessions[0].turns, 1)
   assert.equal(out.sessions[1].toolCalls, 6)
 })
