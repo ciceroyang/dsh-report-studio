@@ -18,6 +18,7 @@ import { loadTemplate, renderTemplate, REPORT_KINDS, hasUnfilledProse, parseRepo
 import { saveReport } from './lib/save.js'
 import { defaultSessionRoot, readWorkspaceSessions } from './lib/sessions.js'
 import { aggregateSessions } from './lib/aggregate.js'
+import { buildFeishuPayload, buildNotionPayload, postJson } from './lib/publish.js'
 
 export const name = 'report-studio'
 
@@ -38,7 +39,20 @@ function normalizeConfig(config) {
   } else if (typeof raw.templatesDirs === 'string' && raw.templatesDirs !== '') {
     templatesDirs = [raw.templatesDirs]
   }
-  return { templatesDirs }
+  const publish = {}
+  if (raw.publish && typeof raw.publish === 'object') {
+    publish.feishuWebhook = typeof raw.publish.feishuWebhook === 'string' ? raw.publish.feishuWebhook : null
+    publish.notionToken = typeof raw.publish.notionToken === 'string' ? raw.publish.notionToken : null
+    publish.notionParentPageId = typeof raw.publish.notionParentPageId === 'string' ? raw.publish.notionParentPageId : null
+  }
+  return {
+    templatesDirs,
+    publish: {
+      feishuWebhook: publish.feishuWebhook ?? process.env.FEISHU_WEBHOOK ?? null,
+      notionToken: publish.notionToken ?? process.env.NOTION_TOKEN ?? null,
+      notionParentPageId: publish.notionParentPageId ?? process.env.NOTION_PARENT_PAGE_ID ?? null,
+    },
+  }
 }
 
 /**
@@ -184,6 +198,88 @@ export function apply(ctx, config) {
       }
       const template = loadTemplate('weekly', settings.templatesDirs)
       return renderTemplate(template, data)
+    },
+  })))
+
+  disposers.push(ctx.tools.register(defineTool({
+    name: 'report_publish',
+    description:
+      '把报告发布到飞书(自定义机器人 webhook)或 Notion(页面),target=dry 时只预览载荷不发请求。' +
+      '飞书需要配置 publish.feishuWebhook 或环境变量 FEISHU_WEBHOOK;' +
+      'Notion 需要 publish.notionToken + publish.notionParentPageId(或 NOTION_TOKEN / NOTION_PARENT_PAGE_ID)。' +
+      'content 直接传报告全文;或省略 content 改用 path 读取已保存的报告文件。',
+    parameters: {
+      target: {
+        type: 'string',
+        enum: ['feishu', 'notion', 'dry'],
+        required: true,
+        description: '发布目标: feishu=飞书机器人, notion=Notion 页面, dry=只预览载荷',
+      },
+      content: {
+        type: 'string',
+        description: '报告 Markdown 全文;省略时从 path 读取',
+      },
+      path: {
+        type: 'string',
+        description: '已保存报告文件的路径(工作区内);content 省略时使用',
+      },
+      title: {
+        type: 'string',
+        description: '可选标题;飞书作为前缀,Notion 作为页面标题',
+      },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => [{
+        type: 'text',
+        text: '发布结果: ' + value.target + ' ok=' + value.ok + ' status=' + value.status + ' — ' + value.detail,
+      }],
+    },
+    async execute(args, exec) {
+      const session = callerSession(exec)
+      const cwd = session.header?.cwd ?? process.cwd()
+      let content = typeof args.content === 'string' ? args.content : ''
+      if (content.trim() === '' && typeof args.path === 'string' && args.path.trim() !== '') {
+        const { readFileSync } = await import('node:fs')
+        const { resolveInside } = await import('./lib/save.js')
+        content = readFileSync(resolveInside(cwd, args.path), 'utf8')
+      }
+      if (content.trim() === '') throw new Error('publish needs content or a readable path')
+      const title = typeof args.title === 'string' ? args.title.trim() : '工作交付报告'
+
+      if (args.target === 'dry') {
+        const feishu = buildFeishuPayload(content, title)
+        const notionParent = settings.publish.notionParentPageId ?? 'NOTION_PARENT_PAGE_ID'
+        const notion = buildNotionPayload(content, title, notionParent)
+        return {
+          target: 'dry',
+          ok: true,
+          status: 0,
+          detail: '载荷预览(未发送)',
+          preview: {
+            feishu: { msg_type: feishu.msg_type, bytes: feishu.content.text.length },
+            notion: { parent: notionParent, blocks: notion.children.length },
+          },
+        }
+      }
+
+      if (args.target === 'feishu') {
+        const webhook = settings.publish.feishuWebhook
+        if (!webhook) throw new Error('未配置飞书 webhook: cordis 配置 publish.feishuWebhook 或环境变量 FEISHU_WEBHOOK')
+        const payload = buildFeishuPayload(content, title)
+        const result = await postJson(webhook, payload)
+        return { target: 'feishu', ok: result.ok, status: result.status, detail: result.ok ? '已发送' : result.text }
+      }
+
+      const token = settings.publish.notionToken
+      const parent = settings.publish.notionParentPageId
+      if (!token || !parent) throw new Error('未配置 Notion: publish.notionToken + publish.notionParentPageId(或 NOTION_TOKEN / NOTION_PARENT_PAGE_ID)')
+      const payload = buildNotionPayload(content, title, parent)
+      const result = await postJson('https://api.notion.com/v1/pages', payload, {
+        Authorization: 'Bearer ' + token,
+        'Notion-Version': '2022-06-28',
+      })
+      return { target: 'notion', ok: result.ok, status: result.status, detail: result.ok ? '已创建页面' : result.text }
     },
   })))
 
