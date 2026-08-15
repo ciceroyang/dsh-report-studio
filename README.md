@@ -151,7 +151,8 @@ Copy any file from this repo's `templates/` directory as a starting point.
 ## Docs & examples
 
 - [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 6 个实测坑
-- [Plugin scaffold](https://github.com/ciceroyang/create-dsh-plugin) — generate the same project layout in one command
+- [Plugin scaffold](https://github.com/ciceroyang/dsh-plugin-starter) — generate the same project layout in one command
+- [Environment doctor](https://github.com/ciceroyang/dsh-doctor) — one-command local diagnostics (port/deps/profiles/logs)
 - [Example daily report](demo/report-daily.example.md) — 真实会话产出的日报样例(凭据块)
 
 ## Contributing

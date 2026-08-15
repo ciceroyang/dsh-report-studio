@@ -142,7 +142,8 @@ agent 会(work-report skill 已教会它):
 ## 文档与示例
 
 - [中文实战教程:从零到发布](docs/tutorial-zh.md) — 完整开发复盘,含 6 个实测坑
-- [插件脚手架](https://github.com/ciceroyang/create-dsh-plugin) — 一键生成同款插件工程
+- [插件脚手架](https://github.com/ciceroyang/dsh-plugin-starter) — 一键生成同款插件工程
+- [环境体检](https://github.com/ciceroyang/dsh-doctor) — 本地环境一键自诊(端口/依赖/profile/日志)
 - [日报样例](demo/report-daily.example.md) — 真实会话产出的日报(含凭据块)
 
 ## 贡献
