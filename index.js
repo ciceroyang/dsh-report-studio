@@ -20,6 +20,7 @@ import { defaultSessionRoot, readWorkspaceSessions } from './lib/sessions.js'
 import { aggregateSessions } from './lib/aggregate.js'
 import { buildFeishuPayload, buildNotionPayload, postJson } from './lib/publish.js'
 import { verifyReportFile } from './lib/verify.js'
+import { verifyReportDirectory } from './lib/verify-dir.js'
 
 export const name = 'report-studio'
 
@@ -293,27 +294,40 @@ export function apply(ctx, config) {
       path: {
         type: 'string',
         required: true,
-        description: '已保存报告文件的路径(工作区内)',
+        description: '已保存报告文件路径(工作区内);dir 未提供时核验单文件',
+      },
+      dir: {
+        type: 'string',
+        description: '可选:核验整个目录下的全部 .md 报告(相对工作区);提供时忽略 path 的单文件语义',
       },
     },
     output: {
       schema: { type: 'object', additionalProperties: true },
       render: (_args, value) => [{
         type: 'text',
-        text: '核验结果: 报告哈希 ' + (value.reportMatch ? '✓ 匹配' : '✗ 不匹配') +
-          (value.artifacts.length > 0
-            ? ' | 产物 ' + value.artifacts.filter((a) => a.match).length + '/' + value.artifacts.length + ' 匹配' +
-              (value.artifacts.some((a) => a.missing) ? '(含缺失)' : '')
-            : ''),
+        text: value.mode === 'batch'
+          ? '批量核验: ' + value.total + ' 份报告中 ' + value.matched + ' 匹配 / ' + value.mismatched + ' 不匹配 / ' + value.noReceipt + ' 无凭据'
+          : '核验结果: 报告哈希 ' + (value.reportMatch ? '✓ 匹配' : '✗ 不匹配') +
+            (value.artifacts.length > 0
+              ? ' | 产物 ' + value.artifacts.filter((a) => a.match).length + '/' + value.artifacts.length + ' 匹配' +
+                (value.artifacts.some((a) => a.missing) ? '(含缺失)' : '')
+              : ''),
       }],
     },
     async execute(args, exec) {
       const session = callerSession(exec)
       const cwd = session.header?.cwd ?? process.cwd()
       const { resolveInside } = await import('./lib/save.js')
+
+      if (typeof args.dir === 'string' && args.dir.trim() !== '') {
+        const summary = verifyReportDirectory(cwd, args.dir.trim())
+        return { mode: 'batch', ...summary }
+      }
+
       const result = verifyReportFile(resolveInside(cwd, args.path), cwd)
       if (!result.receiptPresent) {
         return {
+          mode: 'single',
           reportMatch: false,
           receiptPresent: false,
           claimed: null,
@@ -323,6 +337,7 @@ export function apply(ctx, config) {
         }
       }
       return {
+        mode: 'single',
         reportMatch: result.reportMatch,
         receiptPresent: true,
         claimed: result.claimed,
