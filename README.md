@@ -102,6 +102,7 @@ Independently re-checks a saved report's receipt: recomputes the report SHA-256 
 | Argument | Required | Meaning |
 |---|---|---|
 | `path` | yes | saved report file (inside the workspace) |
+| `dir` | no | batch mode: verify every .md under this workspace-relative directory; returns matched/mismatched/no-receipt summary |
 
 ### report_publish
 
