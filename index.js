@@ -19,6 +19,7 @@ import { saveReport } from './lib/save.js'
 import { defaultSessionRoot, readWorkspaceSessions } from './lib/sessions.js'
 import { aggregateSessions } from './lib/aggregate.js'
 import { buildFeishuPayload, buildNotionPayload, postJson } from './lib/publish.js'
+import { verifyReportFile } from './lib/verify.js'
 
 export const name = 'report-studio'
 
@@ -280,6 +281,55 @@ export function apply(ctx, config) {
         'Notion-Version': '2022-06-28',
       })
       return { target: 'notion', ok: result.ok, status: result.status, detail: result.ok ? '已创建页面' : result.text }
+    },
+  })))
+
+  disposers.push(ctx.tools.register(defineTool({
+    name: 'report_verify',
+    description:
+      '独立核验已保存报告的凭据块:重算报告 SHA-256 与每个产物哈希,逐项给出 match/missing。' +
+      '交付前用它自检,或复核别人交来的报告是否被改动。',
+    parameters: {
+      path: {
+        type: 'string',
+        required: true,
+        description: '已保存报告文件的路径(工作区内)',
+      },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => [{
+        type: 'text',
+        text: '核验结果: 报告哈希 ' + (value.reportMatch ? '✓ 匹配' : '✗ 不匹配') +
+          (value.artifacts.length > 0
+            ? ' | 产物 ' + value.artifacts.filter((a) => a.match).length + '/' + value.artifacts.length + ' 匹配' +
+              (value.artifacts.some((a) => a.missing) ? '(含缺失)' : '')
+            : ''),
+      }],
+    },
+    async execute(args, exec) {
+      const session = callerSession(exec)
+      const cwd = session.header?.cwd ?? process.cwd()
+      const { resolveInside } = await import('./lib/save.js')
+      const result = verifyReportFile(resolveInside(cwd, args.path), cwd)
+      if (!result.receiptPresent) {
+        return {
+          reportMatch: false,
+          receiptPresent: false,
+          claimed: null,
+          actual: result.actual,
+          artifacts: [],
+          detail: '文件不含凭据块,无法核验',
+        }
+      }
+      return {
+        reportMatch: result.reportMatch,
+        receiptPresent: true,
+        claimed: result.claimed,
+        actual: result.actual,
+        artifacts: result.artifacts,
+        detail: result.reportMatch ? '报告与产物全部一致' : '发现不一致,逐项见 artifacts',
+      }
     },
   })))
 
