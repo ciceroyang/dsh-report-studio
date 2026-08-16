@@ -88,6 +88,14 @@ agent 会(work-report skill 已教会它):
 
 聚合本周工作区内所有历史会话(读 $DSH_HOME/sessions 持久化日志)+ 当前会话,生成周报草稿,附"会话明细"表。历史日志读取需要 Node ≥ 22.15(内置 zstd);更老版本自动降级为仅当前会话。
 
+### report_verify
+
+独立核验已保存报告的凭据块:重算报告 SHA-256 与每个产物哈希,逐项输出 match/missing。交付前自检或复核他人报告用。
+
+| 参数 | 必填 | 说明 |
+|---|---|---|
+| `path` | 是 | 已保存报告文件路径(工作区内) |
+
 ### report_publish
 
 把报告发布到飞书(自定义机器人 webhook)或 Notion(页面);`target=dry` 只预览载荷不发请求。

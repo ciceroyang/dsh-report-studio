@@ -95,6 +95,14 @@ Aggregates every persisted session of the current workspace (logs under
 per-session table. Reading historical logs needs Node ≥ 22.15 (built-in zstd);
 older Node degrades gracefully to the current session only.
 
+### report_verify
+
+Independently re-checks a saved report's receipt: recomputes the report SHA-256 and every artifact hash, reporting match/missing per item.
+
+| Argument | Required | Meaning |
+|---|---|---|
+| `path` | yes | saved report file (inside the workspace) |
+
 ### report_publish
 
 Publish a report to Feishu (custom bot webhook) or Notion (page); `target=dry` previews the payload without sending anything.
