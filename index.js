@@ -372,6 +372,11 @@ export function apply(ctx, config) {
         type: 'array',
         description: '报告引用的产出文件路径列表(可空);存在的文件会被哈希进凭据',
       },
+      format: {
+        type: 'string',
+        enum: ['md', 'html'],
+        description: '输出格式;md=Markdown(默认),html=独立可转发的 HTML 文档(凭据以可核验原文块嵌入)',
+      },
     },
     output: {
       schema: { type: 'object', additionalProperties: true },
@@ -389,10 +394,12 @@ export function apply(ctx, config) {
         throw new Error('report still contains unfilled [[待写:…]] slots; fill every slot before saving')
       }
       const kind = typeof args.kind === 'string' && REPORT_KINDS.includes(args.kind) ? args.kind : 'daily'
+      const format = args.format === 'html' ? 'html' : 'md'
       const today = new Date().toISOString().slice(0, 10)
+      const ext = format === 'html' ? '.html' : '.md'
       const path = typeof args.path === 'string' && args.path.trim() !== ''
         ? args.path.trim()
-        : 'reports/' + kind + '-' + today + '.md'
+        : 'reports/' + kind + '-' + today + ext
       const artifacts = Array.isArray(args.artifacts)
         ? args.artifacts.filter((entry) => typeof entry === 'string' && entry !== '')
         : []
@@ -400,6 +407,7 @@ export function apply(ctx, config) {
         cwd: session.header?.cwd ?? process.cwd(),
         path,
         content,
+        format,
         sessionId: String(session.id),
         generatedAt: new Date().toISOString(),
         artifacts,
