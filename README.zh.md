@@ -81,6 +81,7 @@ agent 会(work-report skill 已教会它):
 | `path` | 否 | 目标路径;省略时 `reports/<kind>-<date>.md` |
 | `kind` | 否 | 用于默认文件名;省略时 `daily` |
 | `artifacts` | 否 | 产出文件路径列表;存在的文件会被哈希进凭据块 |
+| `format` | 否 | `md`(默认)/ `html` — HTML 为独立可转发的文档,原始 Markdown 嵌入隐藏源块,`report_verify` 照常可核验 |
 
 返回:绝对路径 + 报告 SHA-256 + 已核验产物列表。
 

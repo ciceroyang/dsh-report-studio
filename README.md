@@ -86,6 +86,8 @@ Returns the full Markdown draft; prose sections are `[[待写:…]]` markers.
 | `kind` | no | used for the default filename |
 | `artifacts` | no | produced file paths; existing files get hashed into the receipt |
 
+| `format` | no | `md` (default) / `html` — standalone forwardable document; the original Markdown is embedded in a hidden source block so `report_verify` still verifies it |
+
 Returns the absolute path, report SHA-256, and verified artifact hashes.
 
 ### report_week
