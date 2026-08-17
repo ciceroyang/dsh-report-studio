@@ -163,6 +163,15 @@ Copy any file from this repo's `templates/` directory as a starting point.
     | 报告哈希 Report SHA-256 | 9f2c… |
     | 产物 Artifacts | README.md → 3a1b… |
 
+## Scheduled weekly reports
+
+Two paths (the work-report skill picks per the session's actual capability):
+
+1. **In-harness (official tools)**: with dsh-schedule mounted, say "generate my weekly report every Friday 18:00" and the agent implements it via `schedule_create` (time zone must be explicit).
+2. **System-level (zero deps, all data sections automatic)**: `scripts/auto-weekly.mjs` needs no model — it aggregates the week's sessions, fills every data section and saves a draft with [[待写:…]] prose slots. Point launchd/cron at it for Friday 18:00, then open a session and say "fill and save".
+
+       node scripts/auto-weekly.mjs <workspace> --out reports/weekly-auto.md
+
 ## Known limitations (0.1.0)
 
 - report_week cross-session aggregation reads historical logs under $DSH_HOME/sessions (multi-frame zstd); historical reading needs Node ≥ 22.15.

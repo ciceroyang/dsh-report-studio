@@ -155,6 +155,15 @@ agent 会(work-report skill 已教会它):
     | 报告哈希 Report SHA-256 | 9f2c… |
     | 产物 Artifacts | README.md → 3a1b… |
 
+## 定时周报
+
+两条路径(work-report skill 会按会话实际能力选择):
+
+1. **harness 内(官方工具)**:若组合已挂载 dsh-schedule,对 agent 说"每周五 18:00 自动出本周周报",它用 `schedule_create` 落地(时区必须显式)。
+2. **系统级(零依赖,数据段全自动)**:仓库 `scripts/auto-weekly.mjs` 不依赖模型,聚合本周全部会话、填好所有数据段、保存草稿(prose 留 [[待写:…]]);配 launchd/cron 每周五 18:00 跑,之后开个会话说"填好并保存"即可。macOS 示例:
+
+       node scripts/auto-weekly.mjs <工作区> --out reports/weekly-auto.md
+
 ## 已知限制(0.1.0)
 
 - report_week 跨会话聚合读取 $DSH_HOME/sessions 历史日志(多帧 zstd),历史读取需 Node ≥ 22.15。
