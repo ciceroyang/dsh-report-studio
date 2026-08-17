@@ -17,6 +17,17 @@
    - `path` 省略时自动存到 `reports/` 目录。
 5. **回复用户**:保存路径 + 一句话摘要 + 报告哈希前 8 位。
 
+## 定时周报(可选进阶)
+
+用户要求"每周五自动出周报"时:
+
+1. **先检查本会话是否挂载了 schedule 工具**(schedule_create / schedule_list / schedule_delete)。有则用官方工具落地,不要自己造定时器:
+   - `schedule_create`: `at` 用 RFC 3339 UTC 或 {date, time, time_zone}(时区必须显式);`every_seconds`: 604800;`prompt`: "请用 report_week 生成本周周报,填满所有段落,保存到 reports/ 目录,并回复保存路径与报告哈希前 8 位。"
+   - `schedule_list` 向用户确认;取消用 `schedule_delete`。
+2. **没有 schedule 工具时如实告知用户**,并给出备选:系统级 launchd/cron(见仓库 scripts/auto-weekly.mjs,可自动生成数据齐备的周报草稿),或系统日历提醒。
+
+提醒触发后,本技能的常规流程原样执行(report_week → 填 prose → report_save → 回复路径+哈希)。
+
 ## 各类型要点
 
 - **daily**:围绕"今天做了什么、产出什么、问题是什么、明天做什么";数据段如实呈现,不美化。
