@@ -10,7 +10,7 @@ DeepSeek Harness 生态中第一个「会话 → 工作交付物」插件:把一
 **工作日报 / 周报 / 交接文档 / 公众号文章**,并附上可验证的凭据块
 (报告哈希 + 产物哈希),让汇报有据可查、无法注水。
 
-> 状态:0.1.0,可用。跟随 Harness 开发者预览节奏,接口可能变化。
+> 状态:可用。当前版本见 [Releases](https://github.com/ciceroyang/dsh-report-studio/releases)。跟随 Harness 开发者预览节奏,接口可能变化。
 
 ## 特性
 
@@ -27,7 +27,7 @@ DeepSeek Harness 生态中第一个「会话 → 工作交付物」插件:把一
 
 ### 方式一:plugin 安装(需要 pnpm)
 
-    dsh plugin --profile web add github:ciceroyang/dsh-report-studio
+    dsh plugin --profile web add github:ciceroyang/dsh-report-studio#v0.4.4
 
 ### 方式二:本地 / 源码覆盖层(无需 pnpm)
 
@@ -165,7 +165,7 @@ agent 会(work-report skill 已教会它):
 
        node scripts/auto-weekly.mjs <工作区> --out reports/weekly-auto.md
 
-## 已知限制(0.1.0)
+## 已知限制
 
 - report_week 跨会话聚合读取 $DSH_HOME/sessions 历史日志(多帧 zstd),历史读取需 Node ≥ 22.15。
 - 落盘走 Node 原生 fs,不经过 Harness 的 fs 策略层;路径逃逸防护在插件内实现。
