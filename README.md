@@ -11,7 +11,7 @@ turn one session into a **daily report / weekly report / handoff document / WeCh
 each sealed with a verifiable receipt block (report hash + artifact hashes), so reports
 cannot be embellished.
 
-> Status: 0.1.0, usable. Tracks the Harness developer preview; interfaces may change.
+> Status: usable. See [Releases](https://github.com/ciceroyang/dsh-report-studio/releases) for current versions. Tracks the Harness developer preview; interfaces may change.
 
 ## Features
 
@@ -32,7 +32,7 @@ Requires Node.js ≥ 18 and DeepSeek Harness.
 
 ### Option 1: plugin install (needs pnpm)
 
-    dsh plugin --profile web add github:ciceroyang/dsh-report-studio
+    dsh plugin --profile web add github:ciceroyang/dsh-report-studio#v0.4.4
 
 ### Option 2: local source overlay (no pnpm)
 
@@ -85,7 +85,6 @@ Returns the full Markdown draft; prose sections are `[[待写:…]]` markers.
 | `path` | no | target path; defaults to `reports/<kind>-<date>.md` |
 | `kind` | no | used for the default filename |
 | `artifacts` | no | produced file paths; existing files get hashed into the receipt |
-
 | `format` | no | `md` (default) / `html` — standalone forwardable document; the original Markdown is embedded in a hidden source block so `report_verify` still verifies it |
 
 Returns the absolute path, report SHA-256, and verified artifact hashes.
@@ -174,7 +173,7 @@ Two paths (the work-report skill picks per the session's actual capability):
 
        node scripts/auto-weekly.mjs <workspace> --out reports/weekly-auto.md
 
-## Known limitations (0.1.0)
+## Known limitations
 
 - report_week cross-session aggregation reads historical logs under $DSH_HOME/sessions (multi-frame zstd); historical reading needs Node ≥ 22.15.
 - Persistence uses Node's `fs` directly, outside the Harness fs policy layer;
