@@ -6,10 +6,9 @@
 
 **When your agent finishes work, have it write up what happened — into something you can actually hand over.**
 
-The first "session → work deliverable" plugin in the DeepSeek Harness ecosystem:
-turn one session into a **daily report / weekly report / handoff document / WeChat-article draft**,
-each sealed with a verifiable receipt block (report hash + artifact hashes), so reports
-cannot be embellished.
+Turn one session into a **daily report / weekly report / handoff document / WeChat-article draft**,
+each sealed with a verifiable receipt block (report hash + artifact hashes) so later
+changes to the saved report or referenced artifacts are detectable.
 
 > Status: usable. See [Releases](https://github.com/ciceroyang/dsh-report-studio/releases) for current versions. Tracks the Harness developer preview; interfaces may change.
 
