@@ -104,13 +104,23 @@ export function apply(ctx, config) {
   if (commands && typeof commands.register === 'function') {
     disposers.push(commands.register({
       name: 'report',
-      description: '即时预览本次会话的报告草稿(daily/weekly/handoff/article)',
-      input: { hint: 'daily | weekly | handoff | article' },
+      description: '即时预览本次会话的报告草稿(daily/weekly/handoff/article),或 /report index [目录] 列出已保存报告',
+      input: { hint: 'daily | weekly | handoff | article | index [目录]' },
       handler(invocation) {
         try {
-          const kind = parseReportKind(invocation.rawInput)
+          const raw = String(invocation.rawInput ?? '').trim()
+          const kind = parseReportKind(raw)
           const session = invocation.agent?.session
           if (!session) return { kind: 'error', text: '/report 需要一个进行中的会话。' }
+          if (/^index\b/i.test(raw)) {
+            const cwd = session.header?.cwd ?? process.cwd()
+            const dir = raw.replace(/^index\b/i, '').trim() || 'reports'
+            const { text, summary } = renderReportIndex(cwd, dir, {})
+            return {
+              kind: 'success',
+              text: '报告索引(' + dir + '): ' + summary.total + ' 份 · ' + summary.matched + ' 通过 / ' + summary.mismatched + ' 不匹配 / ' + summary.noReceipt + ' 无凭据\n\n' + text,
+            }
+          }
           const data = extractSession(session.events, session)
           const template = loadTemplate(kind, settings.templatesDirs)
           const draft = renderTemplate(template, data)
