@@ -1,6 +1,6 @@
 {
   "name": "dsh-report-studio",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Turn a DeepSeek Harness session into deliverable work reports (daily/weekly/handoff/article) with verifiable receipts",
   "type": "module",
   "main": "index.js",

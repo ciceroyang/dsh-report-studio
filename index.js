@@ -10,7 +10,8 @@
  * @module dsh-report-studio
  */
 
-import { readFileSync } from 'node:fs'
+import { readFileSync, mkdirSync, writeFileSync } from 'node:fs'
+import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { extractSession } from './lib/extract.js'
@@ -21,6 +22,7 @@ import { aggregateSessions } from './lib/aggregate.js'
 import { buildFeishuPayload, buildNotionPayload, postJson } from './lib/publish.js'
 import { verifyReportFile } from './lib/verify.js'
 import { verifyReportDirectory } from './lib/verify-dir.js'
+import { renderReportIndex } from './lib/index-report.js'
 
 export const name = 'report-studio'
 
@@ -345,6 +347,53 @@ export function apply(ctx, config) {
         artifacts: result.artifacts,
         detail: result.reportMatch ? '报告与产物全部一致' : '发现不一致,逐项见 artifacts',
       }
+    },
+  })))
+
+  disposers.push(ctx.tools.register(defineTool({
+    name: 'report_index',
+    description:
+      '把工作区里的已保存报告列成索引:类型/日期/会话/核验状态/产物数,核验复用 report_verify 的同一套哈希逻辑。' +
+      '用于交付前总览,或确认哪些报告仍可核验。默认只读;save 传入时额外写出索引文件。',
+    parameters: {
+      dir: {
+        type: 'string',
+        description: '要索引的目录(相对工作区),默认 reports;递归扫描 .md 与 .html',
+      },
+      format: {
+        type: 'string',
+        enum: ['md', 'html'],
+        description: '索引输出格式;默认 md',
+      },
+      save: {
+        type: 'string',
+        description: '可选:把索引写到该路径(工作区内)。不传只返回文本,不落盘',
+      },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => [{
+        type: 'text',
+        text: '报告索引: ' + value.total + ' 份(' + value.matched + ' 通过 / ' + value.mismatched + ' 不匹配 / ' + value.noReceipt + ' 无凭据)' +
+          (value.saved ? '\n已写出: ' + value.saved : '') +
+          '\n\n' + value.text,
+      }],
+    },
+    async execute(args, exec) {
+      const session = callerSession(exec)
+      const cwd = session.header?.cwd ?? process.cwd()
+      const dir = typeof args.dir === 'string' && args.dir.trim() !== '' ? args.dir.trim() : 'reports'
+      const format = args.format === 'html' ? 'html' : 'md'
+      const { text, summary } = renderReportIndex(cwd, dir, { format })
+      let saved = null
+      if (typeof args.save === 'string' && args.save.trim() !== '') {
+        const { resolveInside } = await import('./lib/save.js')
+        const target = resolveInside(cwd, args.save.trim())
+        mkdirSync(dirname(target), { recursive: true })
+        writeFileSync(target, text, 'utf8')
+        saved = target
+      }
+      return { total: summary.total, matched: summary.matched, mismatched: summary.mismatched, noReceipt: summary.noReceipt, saved, text }
     },
   })))
 
