@@ -1,6 +1,6 @@
 {
   "name": "dsh-report-studio",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Turn a DeepSeek Harness session into deliverable work reports (daily/weekly/handoff/article) with verifiable receipts",
   "type": "module",
   "main": "index.js",
@@ -35,9 +35,9 @@
     "url": "git+https://github.com/ciceroyang/dsh-report-studio.git"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": ">=4",
-    "@deepseek-ai/dsh-skill": "*",
-    "@deepseek-ai/dsh-tools": "*"
+    "@deepseek-ai/cordis": ">=4.0.0 <5",
+    "@deepseek-ai/dsh-skill": ">=0.1.0-rc.5 <0.2.0",
+    "@deepseek-ai/dsh-tools": ">=0.1.0-rc.5 <0.2.0"
   },
   "peerDependenciesMeta": {
     "@deepseek-ai/dsh-skill": {
