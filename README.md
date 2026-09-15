@@ -22,6 +22,7 @@ changes to the saved report or referenced artifacts are detectable.
   SHA-256 and artifact SHA-256 appended to every saved report
 - **Safe persistence**: target paths are confined to the session workspace;
   absolute-path escapes and `..` traversal are rejected
+- **Report index**: `report_index` lists every saved report with kind, date, session and verification status, and can write the index as Markdown or HTML
 - **Customizable templates**: override built-in templates wholesale (placeholders below)
 - **No build step**: plain ESM; install via `dsh plugin` or load with a `--patch` overlay
 
@@ -102,7 +103,17 @@ Independently re-checks a saved report's receipt: recomputes the report SHA-256 
 | Argument | Required | Meaning |
 |---|---|---|
 | `path` | yes | saved report file (inside the workspace) |
-| `dir` | no | batch mode: verify every .md under this workspace-relative directory; returns matched/mismatched/no-receipt summary |
+| `dir` | no | batch mode: verify every `.md` **and `.html`** report under this workspace-relative directory; returns matched/mismatched/no-receipt summary |
+
+### report_index
+
+Lists every saved report under a directory (default `reports/`, recursive, `.md` and `.html`) as an index: kind, date, session, verification status and artifact count. Verification reuses `report_verify`'s logic, so the index shows at a glance which reports are still intact.
+
+| Argument | Required | Meaning |
+|---|---|---|
+| `dir` | no | directory to index (workspace-relative); default `reports` |
+| `format` | no | `md` (default) or `html` |
+| `save` | no | optional path to write the index to; without it the tool returns text only and writes nothing |
 
 ### report_publish
 
