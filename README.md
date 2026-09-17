@@ -32,7 +32,7 @@ Requires Node.js ≥ 18 and DeepSeek Harness.
 
 ### Option 1: plugin install (needs pnpm)
 
-    dsh plugin --profile web add github:ciceroyang/dsh-report-studio#v0.4.4
+    dsh plugin --profile web add github:ciceroyang/dsh-report-studio#v0.4.7
 
 ### Option 2: local source overlay (no pnpm)
 
