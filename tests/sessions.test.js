@@ -9,15 +9,15 @@ import { encodeSegment, projectKey, parseSessionLog, listSessionLogs } from '../
 
 test('encodeSegment escapes unsafe code units', () => {
   assert.equal(encodeSegment('ai infra'), 'ai~0020infra')
-  assert.equal(encodeSegment('dhp开源'), 'dhp~5F00~6E90')
+  assert.equal(encodeSegment('示例项目'), '~793A~4F8B~9879~76EE')
   assert.equal(encodeSegment('plain-name'), 'plain-name')
   assert.equal(encodeSegment('.'), '~002E')
   assert.equal(encodeSegment('..'), '~002E~002E')
 })
 
-test('projectKey matches real on-disk directories', () => {
-  assert.equal(projectKey('/Users/zhang/Documents/ai infra'), '--Users-zhang-Documents-ai~0020infra--')
-  assert.equal(projectKey('/Users/zhang/Documents/dhp开源'), '--Users-zhang-Documents-dhp~5F00~6E90--')
+test('projectKey encodes a project path the way the harness writes it', () => {
+  assert.equal(projectKey('/Users/example/Documents/ai infra'), '--Users-example-Documents-ai~0020infra--')
+  assert.equal(projectKey('/Users/example/Documents/示例项目'), '--Users-example-Documents-~793A~4F8B~9879~76EE--')
   assert.throws(() => projectKey(''), /empty project path/)
   assert.equal(projectKey('/'), '--root--')
 })
